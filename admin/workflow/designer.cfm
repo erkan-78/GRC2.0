@@ -90,6 +90,43 @@
                                 <button type="button" class="btn btn-sm btn-outline-primary" onclick="addNode('condition')">
                                     <i class="fas fa-code-branch"></i> <cfoutput>#getLabel('add_condition', 'Add Condition')#</cfoutput>
                                 </button>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                        <i class="fas fa-file-export"></i> <cfoutput>#getLabel('export', 'Export')#</cfoutput>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" href="##" onclick="exportToVisio()">
+                                                <i class="fas fa-file-export"></i> <cfoutput>#getLabel('export_to_visio', 'Export to Visio')#</cfoutput>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="##" onclick="exportToBPMN()">
+                                                <i class="fas fa-project-diagram"></i> <cfoutput>#getLabel('export_to_bpmn', 'Export to BPMN')#</cfoutput>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="##" onclick="exportToXML()">
+                                                <i class="fas fa-code"></i> <cfoutput>#getLabel('export_to_xml', 'Export to XML')#</cfoutput>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                        <i class="fas fa-file-import"></i> <cfoutput>#getLabel('import', 'Import')#</cfoutput>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" href="##" onclick="$('#visioImport').click()">
+                                                <i class="fas fa-file-import"></i> <cfoutput>#getLabel('import_from_visio', 'Import from Visio')#</cfoutput>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-success" onclick="startSimulation()">
+                                    <i class="fas fa-play"></i> <cfoutput>#getLabel('simulate', 'Simulate')#</cfoutput>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -148,6 +185,35 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Add this after the Node Properties card -->
+                <div class="card" id="simulationPanel" style="display: none;">
+                    <div class="card-header">
+                        <h5 class="mb-0"><cfoutput>#getLabel('simulation', 'Simulation')#</cfoutput></h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label"><cfoutput>#getLabel('current_step', 'Current Step')#</cfoutput></label>
+                            <input type="text" class="form-control" id="currentStep" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><cfoutput>#getLabel('next_steps', 'Next Steps')#</cfoutput></label>
+                            <div id="nextSteps" class="list-group">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-secondary" onclick="resetSimulation()">
+                                <i class="fas fa-redo"></i> <cfoutput>#getLabel('reset', 'Reset')#</cfoutput>
+                            </button>
+                            <button type="button" class="btn btn-danger" onclick="stopSimulation()">
+                                <i class="fas fa-stop"></i> <cfoutput>#getLabel('stop', 'Stop')#</cfoutput>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hidden file input for Visio import -->
+                <input type="file" id="visioImport" accept=".vsdx" style="display: none;" onchange="importFromVisio(this)">
             </div>
         </div>
     </div>
@@ -306,6 +372,206 @@
                 selectedNode.innerText = e.target.value;
             }
         });
+
+        // Export to Visio
+        function exportToVisio() {
+            const workflowData = getWorkflowData();
+            $.post('/api/workflow/exportToVisio', workflowData, function(response) {
+                if (response.success) {
+                    // Create download link
+                    const link = document.createElement('a');
+                    link.href = response.fileUrl;
+                    link.download = workflowData.title + '.vsdx';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    alert(response.message);
+                }
+            });
+        }
+
+        // Import from Visio
+        function importFromVisio(input) {
+            if (input.files && input.files[0]) {
+                const formData = new FormData();
+                formData.append('file', input.files[0]);
+
+                $.ajax({
+                    url: '/api/workflow/importFromVisio',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            clearWorkflow();
+                            loadWorkflowFromData(response.workflow);
+                        } else {
+                            alert(response.message);
+                        }
+                    }
+                });
+            }
+        }
+
+        // Simulation functions
+        let isSimulating = false;
+        let currentSimNode = null;
+
+        function startSimulation() {
+            isSimulating = true;
+            document.getElementById('simulationPanel').style.display = 'block';
+            
+            // Find start node (first node without incoming connections)
+            const nodes = document.querySelectorAll('.workflow-node');
+            const startNode = Array.from(nodes).find(node => {
+                return jsPlumbInstance.getConnections({target: node.id}).length === 0;
+            });
+
+            if (startNode) {
+                highlightNode(startNode);
+                updateSimulationPanel(startNode);
+            } else {
+                alert(getLabel('no_start_node', 'No start node found'));
+                stopSimulation();
+            }
+        }
+
+        function stopSimulation() {
+            isSimulating = false;
+            document.getElementById('simulationPanel').style.display = 'none';
+            clearHighlights();
+        }
+
+        function resetSimulation() {
+            clearHighlights();
+            startSimulation();
+        }
+
+        function highlightNode(node) {
+            clearHighlights();
+            currentSimNode = node;
+            node.style.boxShadow = '0 0 10px #28a745';
+            document.getElementById('currentStep').value = node.innerText;
+        }
+
+        function clearHighlights() {
+            document.querySelectorAll('.workflow-node').forEach(node => {
+                node.style.boxShadow = 'none';
+            });
+            currentSimNode = null;
+        }
+
+        function updateSimulationPanel(node) {
+            // Get next possible steps
+            const connections = jsPlumbInstance.getConnections({source: node.id});
+            const nextStepsContainer = document.getElementById('nextSteps');
+            nextStepsContainer.innerHTML = '';
+
+            connections.forEach(conn => {
+                const targetNode = document.getElementById(conn.targetId);
+                const button = document.createElement('button');
+                button.className = 'list-group-item list-group-item-action';
+                button.innerText = targetNode.innerText;
+                button.onclick = () => {
+                    highlightNode(targetNode);
+                    updateSimulationPanel(targetNode);
+                };
+                nextStepsContainer.appendChild(button);
+            });
+
+            if (connections.length === 0) {
+                nextStepsContainer.innerHTML = `
+                    <div class="list-group-item text-muted">
+                        ${getLabel('workflow_complete', 'Workflow Complete')}
+                    </div>
+                `;
+            }
+        }
+
+        // Helper function to get workflow data
+        function getWorkflowData() {
+            return {
+                title: document.getElementById('workflowTitle').value,
+                description: document.getElementById('workflowDescription').value,
+                nodes: Array.from(document.querySelectorAll('.workflow-node')).map(node => ({
+                    id: node.id,
+                    type: node.className.split(' ')[1],
+                    title: node.innerText,
+                    position: {
+                        left: node.style.left,
+                        top: node.style.top
+                    },
+                    controls: getNodeControls(node.id)
+                })),
+                connections: jsPlumbInstance.getAllConnections().map(conn => ({
+                    sourceId: conn.sourceId,
+                    targetId: conn.targetId
+                }))
+            };
+        }
+
+        // Helper function to clear workflow
+        function clearWorkflow() {
+            jsPlumbInstance.reset();
+            document.getElementById('workflow-canvas').innerHTML = '';
+        }
+
+        // Helper function to load workflow from data
+        function loadWorkflowFromData(workflow) {
+            document.getElementById('workflowTitle').value = workflow.title;
+            document.getElementById('workflowDescription').value = workflow.description;
+
+            workflow.nodes.forEach(node => {
+                addNode(node.type);
+                const nodeElement = document.getElementById(node.id);
+                nodeElement.style.left = node.position.left;
+                nodeElement.style.top = node.position.top;
+                nodeElement.innerText = node.title;
+            });
+
+            workflow.connections.forEach(conn => {
+                jsPlumbInstance.connect({
+                    source: conn.sourceId,
+                    target: conn.targetId
+                });
+            });
+        }
+
+        // Export to BPMN
+        function exportToBPMN() {
+            const workflowData = getWorkflowData();
+            $.post('/api/workflow/exportToBPMN', workflowData, function(response) {
+                if (response.success) {
+                    const link = document.createElement('a');
+                    link.href = response.fileUrl;
+                    link.download = workflowData.title + '.bpmn';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    alert(response.message);
+                }
+            });
+        }
+
+        // Export to XML
+        function exportToXML() {
+            const workflowData = getWorkflowData();
+            $.post('/api/workflow/exportToXML', workflowData, function(response) {
+                if (response.success) {
+                    const link = document.createElement('a');
+                    link.href = response.fileUrl;
+                    link.download = workflowData.title + '.xml';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    alert(response.message);
+                }
+            });
+        }
     </script>
 </body>
 </html> 
