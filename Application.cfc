@@ -1,11 +1,13 @@
 component {
-    this.name = "UserManagementApp";
+    this.name = "GRC2";
     this.applicationTimeout = createTimeSpan(0,2,0,0);
     this.sessionManagement = true;
-    this.sessionTimeout = createTimeSpan(0,0,30,0);
-    
-    // Database settings
-    this.datasource = "userManagementDB";
+    this.sessionTimeout = createTimeSpan(0,0,20,0);
+    this.datasource = "grc2";
+    this.mappings = {
+        "/model" = expandPath('./model'),
+        "/controller" = expandPath('./controller')
+    };
     
     function onApplicationStart() {
         application.started = now();
@@ -14,20 +16,16 @@ component {
     
     function onSessionStart() {
         session.started = now();
-        session.isLoggedIn = false;
-        session.userID = "";
-        session.userName = "";
     }
     
-    function onRequestStart(targetPage) {
-        if(structKeyExists(url, "reset")) {
+    function onRequestStart(required string targetPage) {
+        if(structKeyExists(url,"reload")) {
             onApplicationStart();
         }
+        return true;
     }
     
-    function onError(exception, eventName) {
-        writeOutput('<h1>An error occurred</h1>');
-        writeOutput('<p>Please contact the administrator.</p>');
-        writeOutput('<p>Error details: ' & exception.message & '</p>');
+    function onError(any exception, string eventName) {
+        writeDump(arguments.exception);
     }
 } 
