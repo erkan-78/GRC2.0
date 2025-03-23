@@ -1,97 +1,92 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Register</title>
-    <link href="css/styles.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Your Company - GRC Platform</title>
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/register.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-card">
-            <h2>Create Account</h2>
-            <form id="registerForm" onsubmit="submitRegistration(event)">
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" required class="form-control">
+    <div class="container">
+        <div class="registration-card">
+            <div class="registration-header">
+                <img src="assets/images/logo.png" alt="GRC Platform Logo" class="register-logo">
+                <h2>Register Your Company</h2>
+                <p>Join the leading GRC platform for enterprises</p>
+            </div>
+
+            <form action="register_process.cfm" method="post" class="registration-form">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Company Information</h4>
+                        <div class="form-group">
+                            <label>Company Name</label>
+                            <input type="text" name="companyName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Industry</label>
+                            <select name="industry" class="form-control" required>
+                                <option value="">Select Industry...</option>
+                                <option value="finance">Financial Services</option>
+                                <option value="healthcare">Healthcare</option>
+                                <option value="technology">Technology</option>
+                                <option value="manufacturing">Manufacturing</option>
+                                <option value="retail">Retail</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Company Size</label>
+                            <select name="companySize" class="form-control" required>
+                                <option value="">Select Size...</option>
+                                <option value="1-50">1-50 employees</option>
+                                <option value="51-200">51-200 employees</option>
+                                <option value="201-1000">201-1000 employees</option>
+                                <option value="1000+">1000+ employees</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h4>Admin Account</h4>
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" name="firstName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" name="lastName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Work Email</label>
+                            <input type="email" name="email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" name="phone" class="form-control" required>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="firstName">First Name</label>
-                    <input type="text" id="firstName" name="firstName" required class="form-control">
+                <div class="form-group terms-section">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="terms" required>
+                        <label class="form-check-label" for="terms">
+                            I agree to the <a href="terms.cfm">Terms of Service</a> and 
+                            <a href="privacy.cfm">Privacy Policy</a>
+                        </label>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="lastName">Last Name</label>
-                    <input type="text" id="lastName" name="lastName" required class="form-control">
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required class="form-control"
-                           pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
-                           title="Password must be at least 8 characters long and include both letters and numbers">
-                </div>
-
-                <div class="form-group">
-                    <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" required class="form-control">
-                </div>
-
-                <div class="form-group">
-                    <label for="companyID">Company ID</label>
-                    <input type="text" id="companyID" name="companyID" required class="form-control"
-                           pattern="[0-9]{1,9}"
-                           title="Company ID must be a number with maximum 9 digits">
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Register</button>
-                    <a href="login.cfm" class="btn btn-link">Already have an account? Login</a>
+                <button type="submit" class="btn btn-primary btn-block">Register Company</button>
+                
+                <div class="login-link">
+                    Already have an account? <a href="login.cfm">Sign in</a>
                 </div>
             </form>
         </div>
     </div>
-
-    <script>
-        async function submitRegistration(event) {
-            event.preventDefault();
-            
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            if (password !== confirmPassword) {
-                alert('Passwords do not match');
-                return;
-            }
-            
-            const formData = {
-                email: document.getElementById('email').value,
-                firstName: document.getElementById('firstName').value,
-                lastName: document.getElementById('lastName').value,
-                password: password,
-                companyID: document.getElementById('companyID').value
-            };
-            
-            try {
-                const response = await fetch('api/auth.cfc?method=register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
-                
-                const data = await response.json();
-                if (data.success) {
-                    alert('Registration successful! Please login.');
-                    window.location.href = 'login.cfm';
-                } else {
-                    alert(data.message);
-                }
-            } catch (error) {
-                console.error('Error during registration:', error);
-                alert('An error occurred during registration. Please try again.');
-            }
-        }
-    </script>
 </body>
 </html> 

@@ -1,0 +1,75 @@
+{
+    "en": {
+        "welcome": {
+            "title": "Welcome",
+            "last_login": "Last Login",
+            "quick_stats": "Quick Statistics"
+        },
+        "stats": {
+            "high_risks": "High Risks",
+            "requiring_attention": "Requiring Attention",
+            "pending_reviews": "Pending Reviews",
+            "policy_documents": "Policy Documents",
+            "active_audits": "Active Audits",
+            "in_progress": "In Progress",
+            "control_gaps": "Control Gaps",
+            "requiring_review": "Requiring Review"
+        },
+        "sections": {
+            "risk": {
+                "title": "Risk Management",
+                "new_assessment": "New Risk Assessment",
+                "risk_dashboard": "Risk Dashboard",
+                "recent_updates": "Recent Risk Updates",
+                "view_all": "View All"
+            },
+            "policy": {
+                "title": "Policy Management",
+                "new_policy": "New Policy",
+                "pending_reviews": "Pending Reviews",
+                "recent_updates": "Recent Policy Updates",
+                "view_all": "View All"
+            },
+            "audit": {
+                "title": "Audit Management",
+                "new_audit": "New Audit",
+                "findings": "Audit Findings",
+                "active_audits": "Active Audits",
+                "view_all": "View All"
+            },
+            "compliance": {
+                "title": "Compliance Management",
+                "control_library": "Control Library",
+                "assessment": "Assessment",
+                "control_updates": "Control Updates",
+                "view_all": "View All"
+            },
+            "automation": {
+                "title": "Automation",
+                "script_library": "Script Library",
+                "execution_history": "Execution History",
+                "recent_executions": "Recent Executions",
+                "view_all": "View All"
+            }
+        },
+        "status": {
+            "high": "High",
+            "medium": "Medium",
+            "low": "Low",
+            "active": "Active",
+            "pending": "Pending",
+            "completed": "Completed",
+            "failed": "Failed"
+        },
+        "dates": {
+            "due": "Due",
+            "updated": "Updated"
+        }
+    },
+    "es": {
+        // Spanish translations...
+    },
+    "tr": {
+        // Turkish translations...
+    }
+} 

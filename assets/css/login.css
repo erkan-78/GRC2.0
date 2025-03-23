@@ -1,0 +1,230 @@
+:root {
+    --primary-blue: #2196f3;
+    --secondary-blue: #42a5f5;
+    --light-blue: #e3f2fd;
+    --dark-blue: #1976d2;
+    --accent-blue: #64b5f6;
+    --white: #ffffff;
+    --gray-100: #f8f9fa;
+    --gray-200: #e9ecef;
+    --gray-300: #dee2e6;
+    --text-dark: #202124;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    height: 100vh;
+    margin: 0;
+    background-color: var(--white);
+}
+
+/* Login Side Styles (Left) */
+.login-side {
+    background-color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    z-index: 2;
+    position: relative;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 2rem;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.login-logo {
+    width: 120px;
+    margin-bottom: 1.5rem;
+}
+
+.auth-links {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.forgot-link {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 1.5rem;
+}
+
+.register-link {
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--gray-200);
+    margin-top: 1.5rem;
+}
+
+.btn-outline-primary {
+    color: var(--primary-blue);
+    border-color: var(--primary-blue);
+    margin-top: 0.5rem;
+    padding: 0.5rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-blue);
+    color: var(--white);
+    transform: translateY(-1px);
+}
+
+/* Marketing Side Styles (Right) */
+.marketing-side {
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+    padding: 4rem;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.marketing-side::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('../images/light-pattern.svg') no-repeat center center;
+    background-size: cover;
+    opacity: 0.1;
+}
+
+.marketing-content {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.mega-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(to right, var(--white), rgba(255,255,255,0.9));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.lead-text {
+    font-size: 1.5rem;
+    margin-bottom: 3rem;
+    opacity: 0.9;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.feature-item {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.feature-icon {
+    color: var(--light-blue);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.feature-item h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.feature-item p {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.trust-section {
+    margin-top: 3rem;
+}
+
+.trust-badges {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+}
+
+.certification-badges {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.cert-badge {
+    height: 60px;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+}
+
+.cert-badge:hover {
+    opacity: 1;
+}
+
+.badge-item .number {
+    color: var(--light-blue);
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+/* Form Styles */
+.form-control:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.25);
+}
+
+.btn-primary {
+    background: linear-gradient(to right, var(--primary-blue), var(--secondary-blue));
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(to right, var(--dark-blue), var(--primary-blue));
+    transform: translateY(-1px);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991.98px) {
+    .marketing-side {
+        display: none;
+    }
+
+    .login-side {
+        width: 100%;
+        max-width: none;
+    }
+
+    .login-container {
+        padding: 1rem;
+    }
+} 
