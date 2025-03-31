@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LightGRC - Intelligent Governance, Risk & Compliance</title>
     <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+        <link href="assets/css/base.css" rel="stylesheet">
     <link href="assets/css/login.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -13,10 +14,10 @@
     <div class="container-fluid h-100">
         <div class="row h-100">
             <!-- Login Side -->
-            <div class="col-lg-4 login-side">
+            <div class="login-side">
                 <div class="login-container">
                     <div class="login-header">
-                        <div class="brand-logo">
+                        <div class="brand-header">
                             <span class="logo-text">Light<span class="highlight">GRC</span></span>
                         </div>
                         <h2>Welcome Back</h2>
@@ -69,7 +70,7 @@
             </div>
 
             <!-- Marketing Side -->
-            <div class="col-lg-8 marketing-side">
+            <div class="marketing-side">
                 <div class="marketing-content">
                     <h1 class="mega-title">Illuminate Your GRC Journey</h1>
                     <p class="lead-text">
@@ -124,9 +125,9 @@
                             </div>
                         </div>
                         <div class="certification-badges">
-                            <img src="assets/images/iso-27001.png" alt="ISO 27001" class="cert-badge">
-                            <img src="assets/images/soc2.png" alt="SOC 2" class="cert-badge">
-                            <img src="assets/images/gdpr.png" alt="GDPR Compliant" class="cert-badge">
+                            <img src="assets/images/iso-27001.png" width="100" height="100" alt="ISO 27001" class="cert-badge">
+                            <img src="assets/images/soc2.png" width="100" height="100" alt="SOC 2" class="cert-badge">
+                            <img src="assets/images/gdpr.png" width="100" height="100" alt="GDPR" class="cert-badge">
                         </div>
                     </div>
                 </div>

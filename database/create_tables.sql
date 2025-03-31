@@ -24,10 +24,6 @@ CREATE TABLE companies (
     FOREIGN KEY (modifiedByUserID) REFERENCES users(userID)
 );
 
-
-
-
-
 -- Create company statuses table
 CREATE TABLE company_statuses (
     statusID VARCHAR(36) PRIMARY KEY DEFAULT UUID(),
@@ -45,7 +41,7 @@ CREATE TABLE languages (
 
 -- Create translations table
 CREATE TABLE translations (
-    translationID INT PRIMARY KEY IDENTITY(1,1),
+    translationID INT PRIMARY KEY AUTO_INCREMENT,
     languageID VARCHAR(5) NOT NULL,
     translationKey VARCHAR(100) NOT NULL,
     translationValue NVARCHAR(MAX) NOT NULL,
@@ -162,12 +158,9 @@ ALTER TABLE activity_logs
 ALTER TABLE companies
 DROP CONSTRAINT CHK_CompanyID; 
 
-
-
-
 -- Automation Scripts
 CREATE TABLE automation_scripts (
-    scriptID INT IDENTITY(1,1) PRIMARY KEY,
+    scriptID INT AUTO_INCREMENT PRIMARY KEY,
     title NVARCHAR(200) NOT NULL,
     description NVARCHAR(MAX),
     scriptType VARCHAR(50) NOT NULL, -- python, powershell, sql, etc.
@@ -175,7 +168,7 @@ CREATE TABLE automation_scripts (
     parameters NVARCHAR(MAX), -- JSON format for parameter definitions
     inputType VARCHAR(50), -- none, csv, json, etc.
     createdBy INT,
-    createdDate DATETIME DEFAULT GETDATE(),
+    createdDate DATETIME DEFAULT CURRENT_TIMESTAMP,
     modifiedBy INT,
     modifiedDate DATETIME,
     isActive BIT DEFAULT 1
@@ -183,24 +176,26 @@ CREATE TABLE automation_scripts (
 
 -- Script Executions
 CREATE TABLE script_executions (
-    executionID INT IDENTITY(1,1) PRIMARY KEY,
-    scriptID INT FOREIGN KEY REFERENCES automation_scripts(scriptID),
-    auditID INT FOREIGN KEY REFERENCES audits(auditID),
-    controlID INT FOREIGN KEY REFERENCES controls(controlID),
+    executionID INT AUTO_INCREMENT PRIMARY KEY,
+    scriptID INT,
+    auditID INT,
+    controlID INT,
     executedBy INT,
-    executionDate DATETIME DEFAULT GETDATE(),
+    executionDate DATETIME DEFAULT CURRENT_TIMESTAMP,
     status VARCHAR(50), -- pending, running, completed, failed
     resultText NVARCHAR(MAX),
     resultFile VARCHAR(500),
     inputFile VARCHAR(500),
     parameters NVARCHAR(MAX), -- JSON format for parameter values
-    errorMessage NVARCHAR(MAX)
-); 
-
+    errorMessage NVARCHAR(MAX),
+    FOREIGN KEY (scriptID) REFERENCES automation_scripts(scriptID),
+    FOREIGN KEY (auditID) REFERENCES audits(auditID),
+    FOREIGN KEY (controlID) REFERENCES controls(controlID)
+);
 
 -- Company Status Types
 CREATE TABLE companyStatus (
-    statusID INT PRIMARY KEY AUTO_INCREMENT,
+    statusID INT AUTO_INCREMENT PRIMARY KEY,
     statusName VARCHAR(50) NOT NULL,
     description VARCHAR(255)
 );
@@ -210,9 +205,6 @@ INSERT INTO companyStatus (statusName, description) VALUES
 ('APPROVED', 'Company is approved and active'),
 ('SUSPENDED', 'Company access is temporarily suspended'),
 ('REJECTED', 'Company application was rejected');
-
--- Companies Table
-
 
 -- Company Administrators Table
 CREATE TABLE companyAdministrators (
@@ -229,7 +221,7 @@ CREATE TABLE companyAdministrators (
 
 -- Administrator Permissions Table
 CREATE TABLE administratorPermissions (
-    permissionID INT PRIMARY KEY AUTO_INCREMENT,
+    permissionID INT AUTO_INCREMENT PRIMARY KEY,
     permissionName VARCHAR(50) NOT NULL,
     description VARCHAR(255)
 );
@@ -259,7 +251,6 @@ ALTER TABLE users ADD FOREIGN KEY (companyID) REFERENCES companies(companyID);
 
 -- Add isSuperAdmin to users table
 ALTER TABLE users ADD COLUMN isSuperAdmin BOOLEAN DEFAULT false; 
-
 
 -- Alert Messages
 INSERT INTO translations (languageID, translationKey, translationValue) VALUES
@@ -295,11 +286,9 @@ INSERT INTO translations (languageID, translationKey, translationValue) VALUES
 ('es-ES', 'alert.error.generic', 'Se produjo un error. Por favor, inténtelo de nuevo.'),
 ('tr-TR', 'alert.error.generic', 'Bir hata oluştu. Lütfen tekrar deneyin.'); 
 
-
-
 -- Regulations table
 CREATE TABLE regulations (
-    regulationID INT IDENTITY(1,1) PRIMARY KEY,
+    regulationID INT AUTO_INCREMENT PRIMARY KEY,
     title NVARCHAR(255) NOT NULL,
     description NVARCHAR(MAX),
     status VARCHAR(50) NOT NULL DEFAULT 'draft',
@@ -316,7 +305,7 @@ CREATE TABLE regulations (
 
 -- Regulation subitems table
 CREATE TABLE regulation_subitems (
-    subitemID INT IDENTITY(1,1) PRIMARY KEY,
+    subitemID INT AUTO_INCREMENT PRIMARY KEY,
     regulationID INT NOT NULL,
     parentID INT DEFAULT 0,
     title NVARCHAR(255) NOT NULL,
@@ -329,7 +318,7 @@ CREATE TABLE regulation_subitems (
 
 -- Regulation documents table
 CREATE TABLE regulation_documents (
-    documentID INT IDENTITY(1,1) PRIMARY KEY,
+    documentID INT AUTO_INCREMENT PRIMARY KEY,
     regulationID INT NOT NULL,
     fileName NVARCHAR(255) NOT NULL,
     filePath NVARCHAR(500) NOT NULL,
@@ -344,7 +333,7 @@ CREATE TABLE regulation_documents (
 
 -- Regulation version history
 CREATE TABLE regulation_versions (
-    versionID INT IDENTITY(1,1) PRIMARY KEY,
+    versionID INT AUTO_INCREMENT PRIMARY KEY,
     regulationID INT NOT NULL,
     version DECIMAL(4,1) NOT NULL,
     title NVARCHAR(255) NOT NULL,
@@ -357,7 +346,7 @@ CREATE TABLE regulation_versions (
 
 -- Regulation links table
 CREATE TABLE regulation_links (
-    linkID INT IDENTITY(1,1) PRIMARY KEY,
+    linkID INT AUTO_INCREMENT PRIMARY KEY,
     sourceSubitemID INT NOT NULL,
     targetSubitemID INT NOT NULL,
     linkType VARCHAR(50) NOT NULL,
@@ -368,7 +357,7 @@ CREATE TABLE regulation_links (
 
 -- Control regulation links table
 CREATE TABLE control_regulation_links (
-    linkID INT IDENTITY(1,1) PRIMARY KEY,
+    linkID INT AUTO_INCREMENT PRIMARY KEY,
     controlID INT NOT NULL,
     subitemID INT NOT NULL,
     createdDate DATETIME NOT NULL,
@@ -378,7 +367,7 @@ CREATE TABLE control_regulation_links (
 
 -- Policy regulation links table
 CREATE TABLE policy_regulation_links (
-    linkID INT IDENTITY(1,1) PRIMARY KEY,
+    linkID INT AUTO_INCREMENT PRIMARY KEY,
     policyID INT NOT NULL,
     subitemID INT NOT NULL,
     createdDate DATETIME NOT NULL,
@@ -388,7 +377,7 @@ CREATE TABLE policy_regulation_links (
 
 -- Audit control documentation table
 CREATE TABLE audit_control_documentation (
-    documentationID INT IDENTITY(1,1) PRIMARY KEY,
+    documentationID INT AUTO_INCREMENT PRIMARY KEY,
     controlID INT NOT NULL,
     auditID INT NOT NULL,
     userID INT NOT NULL,
@@ -406,7 +395,7 @@ CREATE TABLE audit_control_documentation (
 
 -- Documentation attachments table
 CREATE TABLE documentation_attachments (
-    attachmentID INT IDENTITY(1,1) PRIMARY KEY,
+    attachmentID INT AUTO_INCREMENT PRIMARY KEY,
     documentationID INT NOT NULL,
     fileName NVARCHAR(255) NOT NULL,
     filePath NVARCHAR(500) NOT NULL,
@@ -424,4 +413,44 @@ CREATE INDEX IX_regulation_subitems_parent ON regulation_subitems(parentID);
 CREATE INDEX IX_regulation_subitems_level ON regulation_subitems(level);
 CREATE INDEX IX_audit_control_documentation_control ON audit_control_documentation(controlID);
 CREATE INDEX IX_audit_control_documentation_audit ON audit_control_documentation(auditID);
-CREATE INDEX IX_documentation_attachments_doc ON documentation_attachments(documentationID); 
+CREATE INDEX IX_documentation_attachments_doc ON documentation_attachments(documentationID);
+
+-- Update foreign key definitions for activity_logs table
+ALTER TABLE activity_logs
+    MODIFY userID VARCHAR(36),
+    MODIFY companyID VARCHAR(36),
+    ADD CONSTRAINT FK_ActivityLogs_Users FOREIGN KEY (userID) REFERENCES users(userID),
+    ADD CONSTRAINT FK_ActivityLogs_Companies FOREIGN KEY (companyID) REFERENCES companies(companyID);
+
+-- Update foreign key definitions for companies table
+ALTER TABLE companies
+    MODIFY modifiedByUserID VARCHAR(36),
+    ADD CONSTRAINT FK_Companies_Users FOREIGN KEY (modifiedByUserID) REFERENCES users(userID);
+
+-- Update foreign key definitions for userProfiles table
+ALTER TABLE userProfiles
+    MODIFY userID VARCHAR(36),
+    MODIFY profileID VARCHAR(36),
+    ADD CONSTRAINT FK_UserProfiles_Users FOREIGN KEY (userID) REFERENCES users(userID),
+    ADD CONSTRAINT FK_UserProfiles_Profiles FOREIGN KEY (profileID) REFERENCES profiles(profileID);
+
+-- Update foreign key definitions for profileMenuPermissions table
+ALTER TABLE profileMenuPermissions
+    MODIFY profileID VARCHAR(36),
+    MODIFY menuItemID VARCHAR(36),
+    ADD CONSTRAINT FK_ProfileMenuPermissions_Profiles FOREIGN KEY (profileID) REFERENCES profiles(profileID),
+    ADD CONSTRAINT FK_ProfileMenuPermissions_MenuItems FOREIGN KEY (menuItemID) REFERENCES menuItems(menuItemID);
+
+-- Update foreign key definitions for regulation_documents table
+ALTER TABLE regulation_documents
+    MODIFY regulationID INT,
+    MODIFY uploadedBy INT,
+    ADD CONSTRAINT FK_RegulationDocuments_Regulations FOREIGN KEY (regulationID) REFERENCES regulations(regulationID),
+    ADD CONSTRAINT FK_RegulationDocuments_Users FOREIGN KEY (uploadedBy) REFERENCES users(userID);
+
+-- Update foreign key definitions for documentation_attachments table
+ALTER TABLE documentation_attachments
+    MODIFY documentationID INT,
+    MODIFY uploadedBy INT,
+    ADD CONSTRAINT FK_DocumentationAttachments_Documentation FOREIGN KEY (documentationID) REFERENCES audit_control_documentation(documentationID),
+    ADD CONSTRAINT FK_DocumentationAttachments_Users FOREIGN KEY (uploadedBy) REFERENCES users(userID);
