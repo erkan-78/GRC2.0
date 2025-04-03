@@ -392,7 +392,7 @@
             const languageID = currentLanguage;
             
             try {
-                const response = await fetch('login_process.cfm', {
+                const response = await fetch('/api/login_process.cfm', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

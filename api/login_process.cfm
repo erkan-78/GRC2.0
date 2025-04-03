@@ -1,6 +1,6 @@
 <!--- Initialize services --->
-<cfset variables.userService = new UserService()>
-<cfset variables.securityService = new SecurityService()>
+<cfset variables.userService = new api.UserService()>
+<cfset variables.securityService = new api.SecurityService()>
 
 <!--- Get form data --->
 <cfset formData = {

@@ -313,7 +313,6 @@
                                     <span data-translation-key="register.terms.and">and</span>
                                     <a href="privacy.cfm?languageID=<cfoutput>#languageID#</cfoutput>" class="text-primary" data-translation-key="register.privacy.link">Privacy Policy</a>
                                 </label>
-                           
                                 <div class="invalid-feedback" data-translation-key="register.error.termsRequired"></div>
                             </div>
                             
@@ -508,17 +507,15 @@ function handleSubmit(event) {
         }
     })
     .catch(error => {
+        console.error('Error:', error);
+        submitButton.disabled = false;
+        submitButton.innerHTML = translations['register.submit'];
+        
         // Show error message
         const alert = document.createElement('div');
         alert.className = 'alert alert-danger mt-3';
         alert.innerHTML = translations['register.error.general'];
         document.getElementById('registerForm').insertBefore(alert, document.getElementById('registerForm').firstChild);
-        
-        // Reset button
-        submitButton.disabled = false;
-        submitButton.innerHTML = translations['register.submit'];
-        
-        // Remove alert after 5 seconds
         setTimeout(() => alert.remove(), 5000);
     });
     
