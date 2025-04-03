@@ -1,18 +1,14 @@
 component {
-     queryExecute("INSERT INTO grc.Systemcheck
-(Log_date, actionpage)
-VALUES(now(3), 'userservice.cfc');", {}, {datasource="grc"});
-         
-        
+    
     public void function init() {
-        variables.datasource = "grc";
+        variables.datasource = application.datasource;
     }
     
     public boolean function emailExists(required string email) {
         var result = queryExecute(
             "SELECT COUNT(*) as count FROM users WHERE email = :email",
             {email = {value=arguments.email, cfsqltype="cf_sql_varchar"}},
-            {datasource="grc"}
+            {datasource=variables.datasource}
         );
         
         return result.count > 0;
@@ -66,14 +62,14 @@ VALUES(now(3), 'userservice.cfc');", {}, {datasource="grc"});
                 role = {value=arguments.role, cfsqltype="cf_sql_varchar"},
                 status = {value=arguments.status, cfsqltype="cf_sql_varchar"}
             },
-            {datasource="grc"}
+            {datasource=variables.datasource}
         );
         
         // Get the created user
         var user = queryExecute(
             "SELECT * FROM users WHERE userID = :userID",
             {userID = {value=result.generatedKey, cfsqltype="cf_sql_integer"}},
-            {datasource="grc"}
+            {datasource=variables.datasource}
         );
         
         return user;
@@ -86,7 +82,7 @@ VALUES(now(3), 'userservice.cfc');", {}, {datasource="grc"});
                 userID = {value=arguments.userID, cfsqltype="cf_sql_integer"},
                 status = {value=arguments.status, cfsqltype="cf_sql_varchar"}
             },
-            {datasource="grc"}
+            {datasource=variables.datasource}
         );
     }
     
@@ -94,7 +90,7 @@ VALUES(now(3), 'userservice.cfc');", {}, {datasource="grc"});
         queryExecute(
             "UPDATE users SET lastVerificationAttempt = CURRENT_TIMESTAMP WHERE userID = :userID",
             {userID = {value=arguments.userID, cfsqltype="cf_sql_integer"}},
-            {datasource="grc"}
+            {datasource=variables.datasource}
         );
     }
     
@@ -105,17 +101,4 @@ VALUES(now(3), 'userservice.cfc');", {}, {datasource="grc"});
     private string function hashPassword(required string password, required string salt) {
         return hash(arguments.password & arguments.salt, "SHA-256");
     }
-
-    <!--- Update user's language preference --->
-    <cffunction name="updateLanguagePreference" access="public" returntype="void">
-        <cfargument name="userID" type="string" required="true">
-        <cfargument name="languageID" type="string" required="true">
-        
-        <cfquery name="qUpdateLanguage" datasource="#application.datasource#">
-            UPDATE users 
-            SET preferredLanguage = <cfqueryparam value="#arguments.languageID#" cfsqltype="cf_sql_varchar">,
-                modifiedDate = CURRENT_TIMESTAMP
-            WHERE userID = <cfqueryparam value="#arguments.userID#" cfsqltype="cf_sql_varchar">
-        </cfquery>
-    </cffunction>
 } 

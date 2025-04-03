@@ -44,7 +44,7 @@
                     
                     <!--- Initialize services --->
                     <cfset variables.securityService = new SecurityService()>
-                    <cfset variables.userService = new UserService()>
+                    <cfset variables.userService = new api.user.index()>
                     
                     <!--- Process password change --->
                     <cfif structKeyExists(form, "submit")>

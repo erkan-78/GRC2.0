@@ -2,15 +2,15 @@
 <cfheader name="Content-Type" value="application/json">
  
 <!--- Initialize services --->
-<cfset variables.userService = new UserService()>
-test2
-<cfabort>
-<cfset variables.companyService = new CompanyService()>
-<cfset variables.emailService = new EmailService()>
-<cfset variables.securityService = new SecurityService()>
+<cfset variables.userService = new api.user.index()>
+<cfset variables.companyService = new api.CompanyService()>
+<cfset variables.emailService = new api.EmailService()>
+<cfset variables.securityService = new api.SecurityService()>
+ 
 
+ 
 <!--- Get request body --->
-<cfset requestBody = deserializeJSON(cgi.content)>
+<cfset requestBody = deserializeJSON(getHttpRequestData().content)>
 
 
 <!--- Initialize response --->
@@ -61,10 +61,11 @@ test2
 <cfelseif !variables.securityService.isPasswordStrong(requestBody.password)>
     <cfset arrayAppend(response.errors, {
         field: "password",
-        message: "Password must be at least 8 characters long and contain numbers and letters"
+        message: "Password must be at least 8 characters long and contain numbers, special characters and letters"
     })>
 </cfif>
 
+ <cfset emailDomain = variables.userService.getEmailDomain(requestBody.email)>
 <!--- Check if email already exists --->
 <cfif structKeyExists(requestBody, "email") && variables.userService.emailExists(requestBody.email)>
     <cfset arrayAppend(response.errors, {
@@ -72,35 +73,36 @@ test2
         message: "Email already registered"
     })>
 </cfif>
-
 <!--- Check if company name already exists --->
-<cfif structKeyExists(requestBody, "companyName") && variables.companyService.companyNameExists(requestBody.companyName)>
+<cfif  variables.companyService.companyDomainExists(emailDomain) NEQ 0>
     <cfset arrayAppend(response.errors, {
         field: "companyName",
         message: "Company name already registered"
     })>
-</cfif>
-
-<!--- If no validation errors, proceed with registration --->
+</cfif> 
+<!--- I<f no validation errors, proceed with registration --->
 <cfif arrayLen(response.errors) eq 0>
-    <cftry>
-        <!--- Create company --->
+    <!--- <cftry>
+        Create company 
+       
+        --->
         <cfset company = variables.companyService.createCompany(
             name = requestBody.companyName,
-            status = "pending"
-        )>
-        
+            status = "ce45252d-0e3e-11f0-9017-3ebf08bd720f",
+            email = emailDomain
+        )> 
+       
         <!--- Create user --->
         <cfset user = variables.userService.createUser(
-            companyID = company.companyID,
+            companyID = company.data.companyID,
             firstName = requestBody.firstName,
             lastName = requestBody.lastName,
             email = requestBody.email,
-            password = requestBody.password,
+            password =  emailDomain,
             role = "company.admin",
-            status = "pending"
+            status = "cfcbf81f-0fef-11f0-a0a5-02e353546665"
         )>
-
+      
         <!--- Generate verification token --->
         <cfset verificationToken = variables.securityService.generateVerificationToken(user.userID)>
         
@@ -120,7 +122,7 @@ test2
         
         <cfset variables.emailService.sendTemplatedEmail(emailData)>
         
-        <!--- Set success response --->
+        <!--- Set success response 
         <cfset response.success = true>
         
         <cfcatch type="any">
@@ -133,7 +135,7 @@ test2
                 message: "Registration failed. Please try again later."
             })>
         </cfcatch>
-    </cftry>
+    </cftry>--->
 </cfif>
 
 <!--- Output JSON response --->

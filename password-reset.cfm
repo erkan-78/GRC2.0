@@ -14,7 +14,7 @@
     <cfprocessingdirective suppresswhitespace="true">
         <!--- Initialize services --->
         <cfset variables.securityService = new SecurityService()>
-        <cfset variables.userService = new UserService()>
+        <cfset variables.userService = new api.user.index()>
         
         <!--- Get token from URL --->
         <cfset resetToken = url.token>

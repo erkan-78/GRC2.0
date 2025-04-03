@@ -27,11 +27,11 @@ component {
         }
     }
 
-    remote struct function getTranslations(required string languageID) returnformat="json" {
+    remote struct function getTranslations(required string languageID, required string page) returnformat="json" {
         try {
             var qTranslations = queryExecute(
-                "SELECT translationKey, translationValue FROM translations WHERE languageID = :languageID",
-                {languageID = {value=languageID, cfsqltype="cf_sql_varchar"}},
+                "SELECT translationKey, translationValue FROM translations WHERE languageID = :languageID and page = :page",
+                {languageID = {value=languageID, cfsqltype="cf_sql_varchar"}, page = {value=page, cfsqltype="cf_sql_varchar"}},
                 {datasource=application.datasource}
             );
 

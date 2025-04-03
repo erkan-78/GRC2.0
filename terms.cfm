@@ -3,33 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terms of Service - LightGRC</title>
+    <title>LightGRC - Terms of Service</title>
     <link href="assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/css/base.css" rel="stylesheet">
-    <link href="assets/css/login.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        .terms-content {
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
             max-width: 800px;
-            margin: 0 auto;
+            margin: 2rem auto;
             padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .language-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .terms-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .brand-header {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a237e;
+        }
+        .logo-text .highlight {
+            color: #0d47a1;
+        }
+        .terms-content {
+            line-height: 1.6;
         }
         .terms-section {
             margin-bottom: 2rem;
         }
         .terms-section h2 {
-            color: #2c3e50;
+            color: #1a237e;
             margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-        .terms-section h3 {
-            color: #34495e;
-            margin: 1.5rem 0 1rem;
-            font-size: 1.25rem;
         }
         .terms-section p {
-            color: #555;
-            line-height: 1.6;
             margin-bottom: 1rem;
         }
         .terms-section ul {
@@ -37,163 +64,157 @@
             padding-left: 1.5rem;
         }
         .terms-section li {
-            color: #555;
-            line-height: 1.6;
             margin-bottom: 0.5rem;
         }
-        .last-updated {
-            color: #666;
-            font-size: 0.875rem;
+        .back-link {
+            text-align: center;
             margin-top: 2rem;
-            text-align: right;
         }
     </style>
 </head>
 <body>
-    <div class="container-fluid h-100">
-        <div class="row h-100">
-            <!--- Terms Content Side --->
-            <div class="login-side">
-                <div class="login-container">
-                    <div class="login-header">
-                        <div class="brand-header">
-                            <span class="logo-text">Light<span class="highlight">GRC</span></span>
-                        </div>
-                        <h2>Terms of Service</h2>
-                    </div>
-                    
-                    <div class="terms-content">
-                        <div class="terms-section">
-                            <h2>1. Acceptance of Terms</h2>
-                            <p>
-                                By accessing and using LightGRC, you agree to be bound by these Terms of Service. 
-                                If you do not agree to these terms, please do not use our service.
-                            </p>
-                        </div>
-                        
-                        <div class="terms-section">
-                            <h2>2. Description of Service</h2>
-                            <p>
-                                LightGRC provides a comprehensive governance, risk management, and compliance platform 
-                                designed to help organizations manage their GRC processes efficiently.
-                            </p>
-                        </div>
-                        
-                        <div class="terms-section">
-                            <h2>3. User Accounts</h2>
-                            <p>
-                                To use LightGRC, you must register for an account. You are responsible for:
-                            </p>
-                            <ul>
-                                <li>Maintaining the confidentiality of your account credentials</li>
-                                <li>All activities that occur under your account</li>
-                                <li>Notifying us immediately of any unauthorized use</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="terms-section">
-                            <h2>4. Data and Privacy</h2>
-                            <p>
-                                We take your data privacy seriously. Our collection and use of your data is governed 
-                                by our Privacy Policy. By using LightGRC, you agree to our data practices as described 
-                                in the Privacy Policy.
-                            </p>
-                        </div>
-                        
-                        <div class="terms-section">
-                            <h2>5. Intellectual Property</h2>
-                            <p>
-                                All content, features, and functionality of LightGRC, including but not limited to 
-                                text, graphics, logos, and software, are the exclusive property of LightGRC and are 
-                                protected by U.S. and international copyright, trademark, and other intellectual 
-                                property laws.
-                            </p>
-                        </div>
-                        
-                        <div class="terms-section">
-                            <h2>6. Limitation of Liability</h2>
-                            <p>
-                                LightGRC shall not be liable for any indirect, incidental, special, consequential, 
-                                or punitive damages resulting from your use of or inability to use the service.
-                            </p>
-                        </div>
-                        
-                        <div class="terms-section">
-                            <h2>7. Changes to Terms</h2>
-                            <p>
-                                We reserve the right to modify these terms at any time. We will notify users of any 
-                                material changes via email or through the service.
-                            </p>
-                        </div>
-                        
-                        <div class="terms-section">
-                            <h2>8. Contact Information</h2>
-                            <p>
-                                If you have any questions about these Terms of Service, please contact us at:
-                            </p>
-                            <p>
-                                Email: support@lightgrc.com<br>
-                                Address: 123 Business Street, Suite 100, City, State 12345
-                            </p>
-                        </div>
-                        
-                        <div class="last-updated">
-                            Last updated: #dateFormat(now(), "mmmm d, yyyy")#
-                        </div>
-                    </div>
-                    
-                    <div class="text-center mt-4">
-                        <a href="register.cfm" class="btn btn-primary">Back to Registration</a>
-                    </div>
-                </div>
+    <!--- Get available languages --->
+    <cfquery name="getLanguages" datasource="#application.datasource#">
+        SELECT languageID, languageName
+        FROM languages
+        WHERE isActive = 1
+        ORDER BY languageName
+    </cfquery>
+
+    <!--- Get language from URL or session, default to English --->
+    <cfset languageID = url.languageID ?: session.preferredLanguage ?: "en-US">
+    
+    <!--- Get translations for the current language --->
+    <cfquery name="getTranslations" datasource="#application.datasource#">
+        SELECT translationKey, translationValue
+        FROM translations
+        WHERE languageID = <cfqueryparam value="#languageID#" cfsqltype="cf_sql_varchar">
+        AND page = 'terms'
+    </cfquery>
+    
+    <cfset translations = {}>
+    <cfloop query="getTranslations">
+        <cfset translations[translationKey] = translationValue>
+    </cfloop>
+
+    <div class="language-selector">
+        <select id="languageSelect" class="form-select form-select-sm" onchange="changeLanguage(this.value)">
+            <cfoutput query="getLanguages">
+                <option value="#languageID#" <cfif languageID EQ url.languageID>selected</cfif>>#languageName#</option>
+            </cfoutput>
+        </select>
+    </div>
+
+    <div class="container">
+        <div class="terms-header">
+            <div class="brand-header">
+                <span class="logo-text">Light<span class="highlight">GRC</span></span>
             </div>
-            
-            <!--- Marketing Side --->
-            <div class="marketing-side">
-                <div class="marketing-content">
-                    <h1 class="mega-title">Trust & Security</h1>
-                    <p class="lead-text">
-                        Your data security is our top priority
-                    </p>
-                    
-                    <div class="feature-grid">
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <i class="fas fa-shield-alt"></i>
-                            </div>
-                            <h3>Enterprise Security</h3>
-                            <p>Bank-level data protection</p>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <i class="fas fa-lock"></i>
-                            </div>
-                            <h3>Data Privacy</h3>
-                            <p>GDPR and CCPA compliant</p>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <i class="fas fa-user-shield"></i>
-                            </div>
-                            <h3>User Control</h3>
-                            <p>Complete data ownership</p>
-                        </div>
-                    </div>
-                    
-                    <div class="next-steps">
-                        <h3>Why Choose LightGRC?</h3>
-                        <ul>
-                            <li>Industry-leading security standards</li>
-                            <li>Regular security audits</li>
-                            <li>Transparent data practices</li>
-                            <li>24/7 security monitoring</li>
-                        </ul>
-                    </div>
-                </div>
+            <h1 data-translation-key="terms.title">Terms of Service</h1>
+            <p class="text-muted" data-translation-key="terms.lastUpdated">Last updated: <cfoutput>#dateFormat(now(), "mmmm d, yyyy")#</cfoutput></p>
+        </div>
+
+        <div class="terms-content">
+            <div class="terms-section">
+                <h2 data-translation-key="terms.introduction.title">Introduction</h2>
+                <p data-translation-key="terms.introduction.content">Welcome to LightGRC. By accessing or using our services, you agree to be bound by these Terms of Service.</p>
             </div>
+
+            <div class="terms-section">
+                <h2 data-translation-key="terms.definitions.title">Definitions</h2>
+                <ul>
+                    <li data-translation-key="terms.definitions.service">"Service" refers to the LightGRC platform and all its features</li>
+                    <li data-translation-key="terms.definitions.user">"User" refers to any individual or entity using our Service</li>
+                    <li data-translation-key="terms.definitions.content">"Content" refers to all information and data uploaded to our Service</li>
+                </ul>
+            </div>
+
+            <div class="terms-section">
+                <h2 data-translation-key="terms.usage.title">Usage Terms</h2>
+                <p data-translation-key="terms.usage.content">You must be at least 18 years old to use our Service. You are responsible for maintaining the security of your account.</p>
+            </div>
+
+            <div class="terms-section">
+                <h2 data-translation-key="terms.privacy.title">Privacy and Data Protection</h2>
+                <p data-translation-key="terms.privacy.content">We take your privacy seriously. Please review our Privacy Policy for details on how we collect, use, and protect your data.</p>
+            </div>
+
+            <div class="terms-section">
+                <h2 data-translation-key="terms.termination.title">Account Termination</h2>
+                <p data-translation-key="terms.termination.content">We reserve the right to terminate or suspend your account for violations of these terms or for any other reason.</p>
+            </div>
+
+            <div class="terms-section">
+                <h2 data-translation-key="terms.changes.title">Changes to Terms</h2>
+                <p data-translation-key="terms.changes.content">We may modify these terms at any time. Continued use of the Service after changes constitutes acceptance of the new terms.</p>
+            </div>
+        </div>
+
+        <div class="back-link">
+            <a href="register.cfm?languageID=<cfoutput>#languageID#</cfoutput>" class="btn btn-primary" data-translation-key="terms.backToRegister">Back to Registration</a>
         </div>
     </div>
 
-<script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script>
+    let translations = <cfoutput>#serializeJSON(translations)#</cfoutput>;
+    let currentLanguage = '<cfoutput>#languageID#</cfoutput>';
+
+    // Update all links with the current language
+    function updateLinks() {
+        document.querySelectorAll('a[href*="languageID="]').forEach(link => {
+            const baseUrl = link.href.split('?')[0];
+            link.href = `${baseUrl}?languageID=${currentLanguage}`;
+        });
+    }
+
+    // Apply translations to the page
+    function applyTranslations() {
+        document.querySelectorAll('[data-translation-key]').forEach(element => {
+            const key = element.getAttribute('data-translation-key');
+            if (translations[key]) {
+                if (element.tagName === 'INPUT' && element.type === 'submit') {
+                    element.value = translations[key];
+                } else {
+                    element.textContent = translations[key];
+                }
+            }
+        });
+        updateLinks();
+    }
+
+    // Load translations for a specific language
+    async function loadTranslations(languageID) {
+        try {
+            const response = await fetch(`api/language.cfc?method=getTranslations&languageID=${languageID}&page=terms`);
+            const data = await response.json();
+            
+            if (data.success) {
+                translations = data.data;
+                currentLanguage = languageID;
+                applyTranslations();
+                // Update the hidden input with the new language
+                document.querySelector('input[name="languageID"]').value = languageID;
+                // Update all links with the new language
+                updateLinks();
+                // Update the register.cfm link with the new language
+                const registerLink = document.querySelector('a[href*="register.cfm"]');
+                if (registerLink) {
+                    registerLink.href = `register.cfm?languageID=${languageID}`;
+                }
+            }
+        } catch (error) {
+            console.error('Error loading translations:', error);
+        }
+    }
+
+    // Handle language change
+    async function changeLanguage(languageID) {
+        await loadTranslations(languageID);
+    }
+
+    // Initialize
+    applyTranslations();
+    </script>
 </body>
 </html> 

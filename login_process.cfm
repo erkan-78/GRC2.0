@@ -5,7 +5,8 @@
 <!--- Get form data --->
 <cfset formData = {
     email = form.email ?: "",
-    password = form.password ?: ""
+    password = form.password ?: "",
+    languageID = form.languageID ?: "en-US"
 }>
 
 <!--- Validate input --->
@@ -34,9 +35,11 @@
             <cfset session.firstName = user.firstName>
             <cfset session.lastName = user.lastName>
             <cfset session.role = user.role>
+            <cfset session.languageID = formData.languageID>
             
-            <!--- Update last login --->
+            <!--- Update last login and language preference --->
             <cfset variables.userService.updateLastLogin(user.userID)>
+            <cfset variables.userService.updateLanguagePreference(user.userID, formData.languageID)>
             
             <!--- Redirect to dashboard --->
             <cflocation url="dashboard.cfm" addtoken="false">

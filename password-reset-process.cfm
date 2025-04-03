@@ -14,7 +14,7 @@
     <cfprocessingdirective suppresswhitespace="true">
         <!--- Initialize services --->
         <cfset variables.securityService = new SecurityService()>
-        <cfset variables.userService = new UserService()>
+        <cfset variables.userService = new api.user.index()>
         <cfset variables.emailService = new EmailService()>
         
         <!--- Get form data --->

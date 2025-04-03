@@ -1,11 +1,7 @@
 component {
-     queryExecute("INSERT INTO grc.Systemcheck
-(Log_date, actionpage)
-VALUES(now(3), 'userservice.cfc');", {}, {datasource="grc"});
-         
-        
+    
     public void function init() {
-        variables.datasource = "grc";
+        variables.datasource = application.datasource;
     }
     
     public boolean function emailExists(required string email) {
@@ -19,7 +15,7 @@ VALUES(now(3), 'userservice.cfc');", {}, {datasource="grc"});
     }
     
     public struct function createUser(
-        required numeric companyID,
+        required string companyID,
         required string firstName,
         required string lastName,
         required string email,
@@ -31,7 +27,7 @@ VALUES(now(3), 'userservice.cfc');", {}, {datasource="grc"});
         var salt = generateSalt();
         
         // Hash password
-        var hashedPassword = hashPassword(arguments.password, salt);
+        var hashedPassword = hashPassword(arguments.password, salt, "SHA-256");
         
         // Insert user
         var result = queryExecute(
@@ -43,7 +39,7 @@ VALUES(now(3), 'userservice.cfc');", {}, {datasource="grc"});
                 password,
                 passwordSalt,
                 role,
-                status,
+                statusID,
                 createdDate
             ) VALUES (
                 :companyID,
@@ -57,7 +53,7 @@ VALUES(now(3), 'userservice.cfc');", {}, {datasource="grc"});
                 CURRENT_TIMESTAMP
             )",
             {
-                companyID = {value=arguments.companyID, cfsqltype="cf_sql_integer"},
+                companyID = {value=arguments.companyID, cfsqltype="cf_sql_varchar"},
                 firstName = {value=arguments.firstName, cfsqltype="cf_sql_varchar"},
                 lastName = {value=arguments.lastName, cfsqltype="cf_sql_varchar"},
                 email = {value=arguments.email, cfsqltype="cf_sql_varchar"},
@@ -71,12 +67,18 @@ VALUES(now(3), 'userservice.cfc');", {}, {datasource="grc"});
         
         // Get the created user
         var user = queryExecute(
-            "SELECT * FROM users WHERE userID = :userID",
-            {userID = {value=result.generatedKey, cfsqltype="cf_sql_integer"}},
+            "SELECT * FROM users WHERE email = :email",
+            { email = {value=arguments.email, cfsqltype="cf_sql_varchar"}},
             {datasource="grc"}
         );
         
-        return user;
+          return {
+                    "success": true,
+                    "message": "User created successfully",
+                    "data": {
+                        "userID": user.userID
+                    }
+                };
     }
     
     public void function updateUserStatus(required numeric userID, required string status) {
@@ -106,16 +108,22 @@ VALUES(now(3), 'userservice.cfc');", {}, {datasource="grc"});
         return hash(arguments.password & arguments.salt, "SHA-256");
     }
 
-    <!--- Update user's language preference --->
-    <cffunction name="updateLanguagePreference" access="public" returntype="void">
-        <cfargument name="userID" type="string" required="true">
-        <cfargument name="languageID" type="string" required="true">
+    
+    public string function getEmailDomain(required string email) {
+        // Remove any whitespace and convert to lowercase
+        var cleanEmail = trim(lcase(arguments.email));
         
-        <cfquery name="qUpdateLanguage" datasource="#application.datasource#">
-            UPDATE users 
-            SET preferredLanguage = <cfqueryparam value="#arguments.languageID#" cfsqltype="cf_sql_varchar">,
-                modifiedDate = CURRENT_TIMESTAMP
-            WHERE userID = <cfqueryparam value="#arguments.userID#" cfsqltype="cf_sql_varchar">
-        </cfquery>
-    </cffunction>
+        // Check if email is valid
+        if (!isValid("email", cleanEmail)) {
+            return "";
+        }
+        
+        // Get the part after @ symbol
+        var domain = listLast(cleanEmail, "@");
+        
+        // Remove any trailing dots
+        domain = reReplace(domain, "\.$", "");
+        
+        return domain;
+    }
 } 

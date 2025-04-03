@@ -3,12 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - LightGRC</title>
+    <title>LightGRC - Register Your Company</title>
     <link href="assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/css/base.css" rel="stylesheet">
     <link href="assets/css/login.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <style>
+        body {
+            background-color: #f8f9fa;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .container-fluid {
+            height: 100vh;
+            padding: 0;
+            display: flex;
+        }
+        .row {
+            height: 100%;
+            margin: 0;
+            width: 100%;
+            display: flex;
+        }
+        .login-side {
+            background: white;
+            height: 100%;
+            width: 33%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+        }
+        .marketing-side {
+            background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+            height: 100%;
+            width: 67%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: white;
+            overflow-y: auto;
+        }
+        .login-container {
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
+        }
+        .login-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .login-header img {
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+        .form-floating {
+            margin-bottom: 15px;
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+        }
+        .language-selector {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .alert {
+            display: none;
+            margin-bottom: 20px;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        .feature-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+        .feature-item:hover {
+            transform: translateY(-5px);
+        }
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #64b5f6;
+        }
+        .brand-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a237e;
+        }
+        .logo-text .highlight {
+            color: #0d47a1;
+        }
+        .mega-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+        .lead-text {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        .next-steps {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+        .next-steps h3 {
+            margin-bottom: 1.5rem;
+            color: #64b5f6;
+        }
+        .next-steps ol {
+            padding-left: 1.5rem;
+        }
+        .next-steps li {
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+        @media (max-width: 991.98px) {
+            .marketing-side {
+                display: none;
+            }
+            .login-side {
+                width: 100%;
+                padding: 1rem;
+            }
+        }
         .form-control.is-invalid {
             border-color: #dc3545;
             padding-right: calc(1.5em + 0.75rem);
@@ -49,6 +197,38 @@
     </style>
 </head>
 <body>
+    <!--- Get available languages --->
+    <cfquery name="getLanguages" datasource="#application.datasource#">
+        SELECT languageID, languageName
+        FROM languages
+        WHERE isActive = 1
+        ORDER BY languageName
+    </cfquery>
+
+    <!--- Get language from URL or session, default to English --->
+    <cfset languageID = url.languageID ?: session.preferredLanguage ?: "en-US">
+    
+    <!--- Get translations for the current language --->
+    <cfquery name="getTranslations" datasource="#application.datasource#">
+        SELECT translationKey, translationValue
+        FROM translations
+        WHERE languageID = <cfqueryparam value="#languageID#" cfsqltype="cf_sql_varchar">
+        AND page = 'register'
+    </cfquery>
+    
+    <cfset translations = {}>
+    <cfloop query="getTranslations">
+        <cfset translations[translationKey] = translationValue>
+    </cfloop>
+
+    <div class="language-selector">
+        <select id="languageSelect" class="form-select form-select-sm" onchange="changeLanguage(this.value)">
+            <cfoutput query="getLanguages">
+                <option value="#languageID#" <cfif languageID EQ url.languageID>selected</cfif>>#languageName#</option>
+            </cfoutput>
+        </select>
+    </div>
+
     <div class="container-fluid h-100">
         <div class="row h-100">
             <!--- Registration Form Side --->
@@ -58,7 +238,8 @@
                         <div class="brand-header">
                             <span class="logo-text">Light<span class="highlight">GRC</span></span>
                         </div>
-                        <h2>Create Your Account</h2>
+                        <h2 data-translation-key="register.title">Create Your Account</h2>
+                        <p class="text-muted" data-translation-key="register.subtitle">Join our GRC platform</p>
                     </div>
                     
                     <!--- Success Message --->
@@ -67,79 +248,84 @@
                             <i class="fas fa-check-circle"></i>
                         </div>
                         <div class="verification-message">
-                            <h3>Registration Successful!</h3>
-                            <p id="successText"></p>
+                            <h3 data-translation-key="register.success.title">Registration Successful!</h3>
+                            <p id="successText" data-translation-key="register.success.message"></p>
                         </div>
                         <div class="action-buttons">
-                            <a href="login.cfm" class="btn btn-primary">Log In</a>
+                            <a href="login.cfm" class="btn btn-primary" data-translation-key="register.success.loginButton">Log In</a>
                         </div>
                     </div>
                     
                     <!--- Registration Form --->
                     <div class="form-container" id="registrationForm">
-                        <form id="registerForm" onsubmit="return handleSubmit(event)">
+                        <form id="registerForm" onsubmit="return handleSubmit(event)" class="login-form">
+                            <input type="hidden" name="languageID" value="<cfoutput>#languageID#</cfoutput>">
                             <div class="mb-3">
-                                <label for="companyName" class="form-label">Company Name</label>
+                                <label for="companyName" data-translation-key="register.companyName">Company Name</label>
                                 <input type="text" class="form-control" id="companyName" name="companyName" required>
                                 <div class="invalid-feedback"></div>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="firstName" class="form-label">First Name</label>
+                                <label for="firstName" data-translation-key="register.firstName">First Name</label>
                                 <input type="text" class="form-control" id="firstName" name="firstName" required>
                                 <div class="invalid-feedback"></div>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="lastName" class="form-label">Last Name</label>
+                                <label for="lastName" data-translation-key="register.lastName">Last Name</label>
                                 <input type="text" class="form-control" id="lastName" name="lastName" required>
                                 <div class="invalid-feedback"></div>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email Address</label>
+                                <label for="email" data-translation-key="register.email">Email</label>
                                 <input type="email" class="form-control" id="email" name="email" required>
                                 <div class="invalid-feedback"></div>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
+                                <label for="password" data-translation-key="register.password">Password</label>
                                 <input type="password" class="form-control" id="password" name="password" required>
                                 <div class="password-requirements">
-                                    Password must be at least 8 characters long and contain:
+                                    <span data-translation-key="register.passwordRequirements">Password must be at least 8 characters long and contain:</span>
                                     <ul>
-                                        <li>At least one uppercase letter</li>
-                                        <li>At least one lowercase letter</li>
-                                        <li>At least one number</li>
-                                        <li>At least one special character</li>
+                                        <li data-translation-key="register.passwordRequirement1">At least one uppercase letter</li>
+                                        <li data-translation-key="register.passwordRequirement2">At least one lowercase letter</li>
+                                        <li data-translation-key="register.passwordRequirement3">At least one number</li>
+                                        <li data-translation-key="register.passwordRequirement4">At least one special character</li>
                                     </ul>
                                 </div>
                                 <div class="invalid-feedback"></div>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="confirmPassword" class="form-label">Confirm Password</label>
-                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                <label for="confirmPassword" data-translation-key="register.confirmPassword">Confirm Password</label>
+                                <input type="password" class="form-control" id="confirmPassword" name="confirm_password" required>
                                 <div class="invalid-feedback"></div>
                             </div>
                             
                             <div class="mb-3 form-check">
                                 <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
                                 <label class="form-check-label" for="terms">
-                                    I agree to the <a href="terms.cfm" target="_blank">Terms of Service</a> and <a href="privacy.cfm" target="_blank">Privacy Policy</a>
+                                    <span data-translation-key="register.terms.prefix">I agree to the</span>
+                                    <a href="terms.cfm?languageID=<cfoutput>#languageID#</cfoutput>" class="text-primary" data-translation-key="register.terms.link">Terms of Service</a>
+                                    <span data-translation-key="register.terms.and">and</span>
+                                    <a href="privacy.cfm?languageID=<cfoutput>#languageID#</cfoutput>" class="text-primary" data-translation-key="register.privacy.link">Privacy Policy</a>
                                 </label>
-                                <div class="invalid-feedback">You must agree to the terms and conditions</div>
+                           
+                                <div class="invalid-feedback" data-translation-key="register.error.termsRequired"></div>
                             </div>
                             
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-primary" id="submitButton">
+                                <button type="submit" class="btn btn-primary" id="submitButton" data-translation-key="register.submit">
                                     Create Account
                                 </button>
                             </div>
                         </form>
                         
                         <div class="text-center mt-4">
-                            <p>Already have an account? <a href="login.cfm">Log in</a></p>
+                            <p data-translation-key="register.haveAccount">Already have an account? <a href="login.cfm?languageID=<cfoutput>#languageID#</cfoutput>" data-translation-key="register.loginLink">Log in</a></p>
                         </div>
                     </div>
                 </div>
@@ -148,8 +334,8 @@
             <!--- Marketing Side --->
             <div class="marketing-side">
                 <div class="marketing-content">
-                    <h1 class="mega-title">Welcome to LightGRC</h1>
-                    <p class="lead-text">
+                    <h1 class="mega-title" data-translation-key="register.marketing.title">Welcome to LightGRC</h1>
+                    <p class="lead-text" data-translation-key="register.marketing.subtitle">
                         Your journey to better governance, risk management, and compliance starts here
                     </p>
                     
@@ -158,32 +344,32 @@
                             <div class="feature-icon">
                                 <i class="fas fa-shield-alt"></i>
                             </div>
-                            <h3>Secure Setup</h3>
-                            <p>Enterprise-grade security from day one</p>
+                            <h3 data-translation-key="register.marketing.feature1.title">Secure Setup</h3>
+                            <p data-translation-key="register.marketing.feature1.description">Enterprise-grade security from day one</p>
                         </div>
                         <div class="feature-item">
                             <div class="feature-icon">
                                 <i class="fas fa-rocket"></i>
                             </div>
-                            <h3>Quick Start</h3>
-                            <p>Get up and running in minutes</p>
+                            <h3 data-translation-key="register.marketing.feature2.title">Quick Start</h3>
+                            <p data-translation-key="register.marketing.feature2.description">Get up and running in minutes</p>
                         </div>
                         <div class="feature-item">
                             <div class="feature-icon">
                                 <i class="fas fa-headset"></i>
                             </div>
-                            <h3>24/7 Support</h3>
-                            <p>Expert assistance when you need it</p>
+                            <h3 data-translation-key="register.marketing.feature3.title">24/7 Support</h3>
+                            <p data-translation-key="register.marketing.feature3.description">Expert assistance when you need it</p>
                         </div>
                     </div>
                     
                     <div class="next-steps">
-                        <h3>Next Steps</h3>
+                        <h3 data-translation-key="register.marketing.nextSteps.title">Next Steps</h3>
                         <ol>
-                            <li>Create your account</li>
-                            <li>Verify your email</li>
-                            <li>Complete your company profile</li>
-                            <li>Start using LightGRC</li>
+                            <li data-translation-key="register.marketing.nextSteps.step1">Create your account</li>
+                            <li data-translation-key="register.marketing.nextSteps.step2">Verify your email</li>
+                            <li data-translation-key="register.marketing.nextSteps.step3">Complete your company profile</li>
+                            <li data-translation-key="register.marketing.nextSteps.step4">Start using LightGRC</li>
                         </ol>
                     </div>
                 </div>
@@ -193,6 +379,57 @@
 
 <script src="assets/js/bootstrap.bundle.min.js"></script>
 <script>
+let translations = <cfoutput>#serializeJSON(translations)#</cfoutput>;
+let currentLanguage = '<cfoutput>#languageID#</cfoutput>';
+
+// Update all links with the current language
+function updateLinks() {
+    document.querySelectorAll('a[href*="languageID="]').forEach(link => {
+        const baseUrl = link.href.split('?')[0];
+        link.href = `${baseUrl}?languageID=${currentLanguage}`;
+    });
+}
+
+// Apply translations to the page
+function applyTranslations() {
+    document.querySelectorAll('[data-translation-key]').forEach(element => {
+        const key = element.getAttribute('data-translation-key');
+        if (translations[key]) {
+            if (element.tagName === 'INPUT' && element.type === 'submit') {
+                element.value = translations[key];
+            } else {
+                element.textContent = translations[key];
+            }
+        }
+    });
+    updateLinks();
+}
+
+// Load translations for a specific language
+async function loadTranslations(languageID) {
+    try {
+        const response = await fetch(`api/language.cfc?method=getTranslations&languageID=${languageID}&page=register`);
+        const data = await response.json();
+        
+        if (data.success) {
+            translations = data.data;
+            currentLanguage = languageID;
+            applyTranslations();
+            // Update the hidden input with the new language
+            document.querySelector('input[name="languageID"]').value = languageID;
+            // Update all links with the new language
+            updateLinks();
+        }
+    } catch (error) {
+        console.error('Error loading translations:', error);
+    }
+}
+
+// Handle language change
+async function changeLanguage(languageID) {
+    await loadTranslations(languageID);
+}
+
 function handleSubmit(event) {
     event.preventDefault();
     
@@ -205,25 +442,26 @@ function handleSubmit(event) {
         firstName: document.getElementById('firstName').value,
         lastName: document.getElementById('lastName').value,
         email: document.getElementById('email').value,
-        password: document.getElementById('password').value
+        password: document.getElementById('password').value,
+        languageID: currentLanguage
     };
     
     // Validate passwords match
     if (formData.password !== document.getElementById('confirmPassword').value) {
-        showError('confirmPassword', 'Passwords do not match');
+        showError('confirmPassword', translations['register.error.passwordsMatch']);
         return false;
     }
     
     // Validate terms acceptance
     if (!document.getElementById('terms').checked) {
-        showError('terms', 'You must agree to the terms and conditions');
+        showError('terms', translations['register.error.termsRequired']);
         return false;
     }
     
     // Disable submit button and show loading state
     const submitButton = document.getElementById('submitButton');
     submitButton.disabled = true;
-    submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Creating Account...';
+    submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ' + translations['register.submit'];
     
     // Make API call
     fetch('/api/register.cfm', {
@@ -266,19 +504,19 @@ function handleSubmit(event) {
             
             // Reset button
             submitButton.disabled = false;
-            submitButton.innerHTML = 'Create Account';
+            submitButton.innerHTML = translations['register.submit'];
         }
     })
     .catch(error => {
         // Show error message
         const alert = document.createElement('div');
         alert.className = 'alert alert-danger mt-3';
-        alert.innerHTML = 'An error occurred. Please try again.';
+        alert.innerHTML = translations['register.error.general'];
         document.getElementById('registerForm').insertBefore(alert, document.getElementById('registerForm').firstChild);
         
         // Reset button
         submitButton.disabled = false;
-        submitButton.innerHTML = 'Create Account';
+        submitButton.innerHTML = translations['register.submit'];
         
         // Remove alert after 5 seconds
         setTimeout(() => alert.remove(), 5000);
@@ -306,6 +544,9 @@ function resetForm() {
         alert.remove();
     });
 }
+
+// Initialize
+applyTranslations();
 </script>
 </body>
 </html> 
