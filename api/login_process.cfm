@@ -1,58 +1,73 @@
 <!--- Initialize services --->
-<cfset variables.userService = new api.UserService()>
+<cfset variables.userService = new api.user.index()>
 <cfset variables.securityService = new api.SecurityService()>
-
+<cfset requestBody = deserializeJSON(getHttpRequestData().content)>
 <!--- Get form data --->
 <cfset formData = {
-    email = form.email ?: "",
-    password = form.password ?: "",
-    languageID = form.languageID ?: "en-US"
+    email = requestBody.email ?: "",
+    password = requestBody.password ?: "",
+    languageID = requestBody.languageID ?: "en-US"
 }>
-
 <!--- Validate input --->
 <cfif !len(trim(formData.email)) || !len(trim(formData.password))>
-    <cflocation url="login.cfm?error=missing_fields" addtoken="false">
+    <cflocation url="/login.cfm?error=missing_fields" addtoken="false">
 </cfif>
 
 <!--- Validate email format --->
 <cfif !isValid("email", formData.email)>
-    <cflocation url="login.cfm?error=invalid_email" addtoken="false">
+    <cflocation url="/login.cfm?error=invalid_email" addtoken="false">
 </cfif>
 
-<!--- Attempt login --->
-<cftry>
+ 
+<!--- Attempt login--->
+<cftry> 
     <!--- Get user by email --->
-    <cfset user = variables.userService.getUserByEmail(formData.email)>
-    
+   <cfset user = variables.userService.getUserByEmail(formData.email)>
     <!--- Check if user exists and is active --->
-    <cfif !isNull(user) && user.status eq "active">
-        <!--- Verify password --->
-        <cfif variables.securityService.verifyPassword(formData.password, user.password, user.passwordSalt)>
+    <cfif !isNull(user) && user.data.statusId eq "cfcbdfa1-0fef-11f0-a0a5-02e353546665">
+        <!--- Verify password --->   
+        <cfset verifyPassword = variables.userService.verifyPassword(formData.email, formData.password)>
+          <cfif verifyPassword.success>
             <!--- Set session variables --->
-            <cfset session.userID = user.userID>
-            <cfset session.companyID = user.companyID>
-            <cfset session.email = user.email>
-            <cfset session.firstName = user.firstName>
-            <cfset session.lastName = user.lastName>
-            <cfset session.role = user.role>
+            <cfset session.userID = user.data.userID>
+            <cfset session.companyID = user.data.companyID>
+            <cfset session.email = user.data.email>
+            <cfset session.firstName = user.data.firstName>
+            <cfset session.lastName = user.data.lastName>
+            <cfset session.role = user.data.role>
             <cfset session.languageID = formData.languageID>
-            
+            <cfset session.isLoggedIn = true>
+       
             <!--- Update last login and language preference --->
-            <cfset variables.userService.updateLastLogin(user.userID)>
-            <cfset variables.userService.updateLanguagePreference(user.userID, formData.languageID)>
+            <cfset variables.userService.updateLastLogin(user.data.userID)>  
+            <cfset variables.userService.updatePreferredLanguage(user.data.userID, formData.languageID)>
             
             <!--- Redirect to dashboard --->
-            <cflocation url="dashboard.cfm" addtoken="false">
+            {
+       "success": true,
+       "message": "Login successful"}
         <cfelse>
-            <cflocation url="login.cfm?error=invalid_credentials" addtoken="false">
+            {
+       "success": false,
+       "message": "Please enter both email and password",
+       "data": {}
+   }
         </cfif>
     <cfelse>
-        <cflocation url="login.cfm?error=invalid_credentials" addtoken="false">
+           {
+       "success": false,
+       "message": "Please enter both email and password",
+       "data": {}
+   }
     </cfif>
     
     <cfcatch type="any">
         <!--- Log the error --->
         <cflog file="login" type="error" text="Login error: #cfcatch.message#">
-        <cflocation url="login.cfm?error=system_error" addtoken="false">
+          {
+       "success": false,
+       "message": "Please enter both email and password",
+       "data": {}
+   }
     </cfcatch>
-</cftry> 
+</cftry>
