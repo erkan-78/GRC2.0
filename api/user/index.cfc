@@ -171,13 +171,13 @@ component {
             {datasource="grc"}
         );
         
-          return {
-                    "success": true,
-                    "message": "User created successfully",
-                    "data": {
-                        "userID": user.userID
-                    }
-                };
+        return {
+            "success": true,
+            "message": "User created successfully",
+            "data": {
+                "userID": user.userID
+            }
+        };
     }
     
     public void function updateUserStatus(required numeric userID, required string status) {

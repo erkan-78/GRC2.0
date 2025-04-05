@@ -1,10 +1,13 @@
 <!--- Get user menu --->
+
 <cfset menuService = new api.menu.index()>
+
 <cfset menuResult = menuService.getUserMenu(session.userID, session.languageID)>
+
 <cfif menuResult.success> 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="dashboard.cfm">
+            <a class="navbar-brand" href="/dashboard.cfm">
                 <span class="logo-text">Light<span class="highlight">GRC</span></span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -22,7 +25,7 @@
                                     <ul class="nav flex-column submenu">
                                         <cfloop array="#menuItem.children#" index="childItem">
                                             <li class="nav-item">
-                                                <a class="nav-link" href="#childItem.route#" data-translation-key="#childItem.translationKey#">
+                                                <a class="nav-link" href="/#childItem.route#" data-translation-key="#childItem.translationKey#">
                                                     <i class="bi bi-#childItem.icon#"></i> #childItem.label#
                                                 </a>
                                             </li>
@@ -36,12 +39,12 @@
                 <div class="d-flex align-items-center">
                     <select id="languageSelect" class="form-select form-select-sm me-3" style="width: 120px;"  onchange="changeLanguage(this.value)">>
                         <cfoutput query="getLanguages">
-                            <option value="#languageID#" <cfif languageID EQ session.preferredLanguage>selected</cfif>>#languageName#</option>
+                            <option value="#languageID#" <cfif languageID EQ session.languageID>selected</cfif>>#languageName#</option>
                         </cfoutput>
                     </select>
                     <div class="navbar-text me-3 text-white">
-                        Welcome,<cfoutput>
-                        #session.firstName# #session.lastName#</cfoutput>!
+                       <cfoutput>
+                        #session.firstName# #session.lastName#</cfoutput>
                     </div>
                     <form method="post" action="logout.cfm" class="d-flex">
                         <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
@@ -122,7 +125,7 @@
         // Load translations for a specific language
         async function loadTranslations(languageID) {
             try {
-                const response = await fetch(`api/language.cfc?method=getTranslations&languageID=${languageID}&page=dashboard`);
+                const response = await fetch(`/api/language.cfc?method=getTranslations&languageID=${languageID}&page=<cfoutput>#pageid#</cfoutput>`);
                 const data = await response.json();
                 
                 if (data.success) {
@@ -142,7 +145,7 @@
         // Load translations for a specific language
         async function loadTranslations2(languageID) {
             try {
-                const response = await fetch(`api/language.cfc?method=getTranslations&languageID=${languageID}&page=menu`);
+                const response = await fetch(`/api/language.cfc?method=getTranslations&languageID=${languageID}&page=menu`);
                 const data = await response.json();
                 
                 if (data.success) {

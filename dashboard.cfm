@@ -17,7 +17,7 @@
     <cfif NOT structKeyExists(session, "isLoggedIn") OR NOT session.isLoggedIn>
         <cflocation url="login.cfm" addtoken="false">
     </cfif>
-
+  <cfset pageid="dashboard">
     <!--- Get available languages --->
     <cfquery name="getLanguages" datasource="#application.datasource#">
         SELECT languageID, languageName
@@ -28,7 +28,7 @@
     <cfif isDefined("url.languageID")>
      <cfloop query="getLanguages">
         <cfif languageID EQ url.languageID>
-            <cfset session.preferredLanguage = url.languageID>
+            <cfset session.languageID = url.languageID>
             <cfquery name="updateUserLanguage" datasource="#application.datasource#">
                 UPDATE users
                 SET preferredLanguage = <cfqueryparam value="#url.languageID#" cfsqltype="cf_sql_varchar">
@@ -43,11 +43,11 @@
     </cfif>
    
     <!--- Get translations for the current language --->
-    <cfset languageID = session.preferredLanguage ?: "en-US">
+    <cfset languageID = session.languageID ?: "en-US">
     <cfquery name="getTranslations" datasource="#application.datasource#">
         SELECT translationKey, translationValue
         FROM translations
-        WHERE languageID = <cfqueryparam value="#session.preferredLanguage#" cfsqltype="cf_sql_varchar">
+        WHERE languageID = <cfqueryparam value="#session.languageID#" cfsqltype="cf_sql_varchar">
         and page = 'dashboard'
     </cfquery>
     

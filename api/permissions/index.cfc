@@ -53,7 +53,7 @@ component {
                         route: row.route
                     };
                 }
-                   
+                
                 result.data = {
                     permissions: permissions
                 };
@@ -76,17 +76,25 @@ component {
         };
 
         try {
-            var permissions = getUserPermissions(arguments.userID);
-            
-            if (permissions.success) {
-                // Check if permission exists in any category
-                for (var category in permissions.data.permissions) {
-                    if (structKeyExists(permissions.data.permissions[category], arguments.permissionName)) {
-                        result.hasPermission = true;
-                        break;
-                    }
-                }
+          
+            var permissionQuery = queryExecute("
+                       select * from grc.user_roles ur 
+                        join grc.users u on ur.userID = u.userid
+                        join grc.role_permissions rp on ur.roleID = rp.roleID 
+                        join grc.permissions p  on rp.permissionID = p.permissionID
+                        where ur.userId=:userID
+                        and p.permissionName =:permissionName
+                        and p.isActive = 1
+                        and u.isActive =1
+                    
+            ", {
+                userID: { value: arguments.userID, cfsqltype: "cf_sql_varchar" },
+                permissionName: { value: arguments.permissionName, cfsqltype: "cf_sql_varchar" }
+            });
+            if (permissionQuery.recordCount > 0) {
+                result.hasPermission = true;
             }
+
         } catch (any e) {
             result.success = false;
             result.message = e.message;
